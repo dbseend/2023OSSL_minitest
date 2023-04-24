@@ -20,7 +20,7 @@ void listProduct(Product *p,int count){
     printf("\nNo. Name          weight price\n");
     printf("================================\n");
     for(int i=0; i<count; i++){
-        if( p[i].weight == -1 || p[i].price == -1 ) continue;
+        if( p->weight == -1 || p->price == -1 ) continue;
         printf("%2d.", i+1);
         readProduct(&p[i]);
     }
@@ -39,13 +39,15 @@ int selectDataNo(Product *p, int count){
 //배열데이터를 파일에 저장하는 함수
 void saveData(Product p[], int count){
 	FILE* fp;
-
 	//중량 가격 제품명
 	fp= fopen("product.txt","wt");
 	for(int i=0; i<count; i++){
-		if(p[i].price > 0){
-			fprintf(fp, "%d %d %s\n", p[i].weight, p[i].price, p[i].name);
-			}
+		if(p[i].price == -1){
+			continue;
+		}
+		else{
+			fprintf(fp, "%s %d %d\n", p[i].name, p[i].weight, p[i].price);
+		}
 	}
 	fclose(fp);
 	printf("저장됨!\n");
@@ -53,29 +55,23 @@ void saveData(Product p[], int count){
 
 
 //파일에서 데이터 불러오는 함수
-int loadData(Product *p[]){
+int loadData(Product *p){
 	int count=0;
 	FILE*fp;
 
-	//파일 내용을 읽어와서 배열에 값 추가하기
+	//파일 내용i을 읽어와서 배열에 값 추가하기
 	fp = fopen("product.txt", "rt");
-	while(!feof(fp)){
-		p[count] = (Product*)malloc(sizeof(Product));
-		char name[60];
-		int weight, price;
-		fscanf(fp, "%d %d", &p[count]->weight, &p[count]->price);
-		fgets(p[count]->name, 60, fp);
-
-		count++;
-	}
-	fclose(fp);
-
-
-	if(count == 0){
+	if(fp == NULL){
 		printf("=> 파일 없음\n");
+		return 0;
 	}
-	else{
-		printf("=>로딩 성공\n");
+	fscanf(fp, "%s", p->name);
+	if(feof(fp)){
+		return count;
 	}
+	fscanf(fp, "%d", &p->weight);
+	fscanf(fp, "%d", &p->price);
+	count++;
+
 	return count;
 }
