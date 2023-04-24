@@ -1,4 +1,6 @@
 #include "manager.h"
+#include <stdlib.h>
+#include <string.h>
 
 int selectMenu(){
     int menu;
@@ -40,23 +42,40 @@ void saveData(Product p[], int count){
 
 	//중량 가격 제품명
 	fp= fopen("product.txt","wt");
-	
-	
+	for(int i=0; i<count; i++){
+		if(p[i].price > 0){
+			fprintf(fp, "%d %d %s\n", p[i].weight, p[i].price, p[i].name);
+			}
+	}
 	fclose(fp);
 	printf("저장됨!\n");
 }
 
 
 //파일에서 데이터 불러오는 함수
-int loadData(Product *p){
+int loadData(Product *p[]){
 	int count=0;
 	FILE*fp;
 
 	//파일 내용을 읽어와서 배열에 값 추가하기
+	fp = fopen("product.txt", "rt");
+	while(!feof(fp)){
+		p[count] = (Product*)malloc(sizeof(Product));
+		char name[60];
+		int weight, price;
+		fscanf(fp, "%d %d", &p[count]->weight, &p[count]->price);
+		fgets(p[count]->name, 60, fp);
+
+		count++;
+	}
+	fclose(fp);
 
 
-
-
-	printf("=> 로딩 성공!\n");
+	if(count == 0){
+		printf("=> 파일 없음\n");
+	}
+	else{
+		printf("=>로딩 성공\n");
+	}
 	return count;
 }

@@ -1,9 +1,11 @@
 #include "product.h"
+#include <string.h>
 
 int createProduct(Product *p){
     printf("\n");
     printf("제품명은? ");
-    scanf("%[^\n]s",p->name);
+    fgets(p->name, 60, stdin);
+    p->name[strlen(p->name)-1] = '\0';
 
     printf("중량은? ");
     scanf("%d",&p->weight);
